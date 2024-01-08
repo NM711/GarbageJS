@@ -12,14 +12,38 @@ namespace RouterTypes {
 
   export type MiddlewareType = ControllerType<Next | void | Promise<Next | void>>;
   
-  export interface RouteBody {
-    methods: Map<HttpMethod, MiddlewareType[]>;
-    handler: HandlerType | null;
+  export type RouteBody = (MiddlewareType | HandlerType)[];
+
+  export type RouteBodyMap = Map<HttpMethod, RouteBody>;
+
+  export type RouteMap = Map<string, Route>;
+
+  // body is arr because routes can have different methods with the same name that run different funcionality
+  export type Route = {
+    type: "AppRoute";
+    body: RouteBodyMap;
   };
 
-  export type Path = string;
+  export type Router = {
+    type: "AppRouter";
+    routerMiddlewares: MiddlewareType[];
+    routes: RouteMap; 
+  };
 
-  export type Routes = Map<Path, RouteBody>;
+  export type RouterMap = Map<string, Router>
+
+  export interface App {
+    type: "AppRoot";
+    routers: RouterMap;
+    globalMiddlewares: MiddlewareType[];
+  };
+
+  export interface CreateRouteBody {
+    path: string;
+    method: RouterTypes.HttpMethod;
+    middlewares: RouterTypes.MiddlewareType[];
+    handler: RouterTypes.HandlerType;
+  };
 };
 
 export default RouterTypes;
